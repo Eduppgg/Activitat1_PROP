@@ -207,9 +207,46 @@ public class Mapa {
      */
     public List<Moviment> getAccionsPossibles() {
         List<Moviment> res = new ArrayList<>();
-        // ===============================================
-        //@TODO: A IMPLEMENTAR !!!!!!
-        // ===============================================
+        Direccio[] dirs ={Direccio.AMUNT,Direccio.AVALL,Direccio.ESQUERRA,Direccio.DRETA};
+        for (int agent=1; agent<=agents.size();agent++)
+        {
+            Posicio actual=agents.get(agent-1);
+            
+            for(Direccio d:dirs)
+            {
+                Posicio desti= actual.translate(d);
+                
+                int cela=getCell(desti);
+                if(cela==PARET)
+                {
+                    continue;
+                }
+                if(Character.isUpperCase(cela) && !portaObrible((char)cela))
+                {
+                    continue;
+                }
+                boolean colisio=false;
+                for (int i=0; i<agents.size() && colisio==false;i++)
+                {
+                    if(i==agent-1)
+                    {
+                        continue;
+                    }
+                    if(agents.get(i).equals(desti))
+                    {
+                        colisio=true;
+                    }
+                }
+                if(colisio==true)
+                {
+                    continue;
+                }
+                
+                boolean recull = (Character.isLowerCase(cela) && !teClau((char)cela));
+                
+                res.add(new Moviment(agent,d,recull));
+            }
+        }
         return res;
     }
 
