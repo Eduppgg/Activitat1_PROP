@@ -262,20 +262,27 @@ public class Mapa {
     @Override
     public boolean equals(Object o) {
         
-        // ===============================================
-        //@TODO: A IMPLEMENTAR !!!!!!
-        // ===============================================
+        if (this == o) 
+        {
+            return true;
+        }
         
-        return true;
+        if (o == null || getClass() != o.getClass()) 
+        {
+            return false;
+        }
+        
+        Mapa mapa = (Mapa) o;
+        if (!agents.equals(mapa.agents))
+        {
+            return false;
+        }
+        return clausMask == mapa.clausMask;
     }
 
     @Override
     public int hashCode() {
-        // ===============================================
-        //@TODO: A IMPLEMENTAR !!!!!!
-        // ===============================================
-        
-        return 0;
+          return Objects.hash(agents, clausMask);
     }
 
     @Override
@@ -302,3 +309,4 @@ public class Mapa {
     //@TODO: (opcionalment) el que cregueu convenient per ampliar la classe.
 
 }
+
