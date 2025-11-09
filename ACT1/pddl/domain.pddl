@@ -1,50 +1,47 @@
-(define (domain locks-keys)
+(define (domain panys-claus)
   (:requirements :typing :strips)
-  (:types agent key door cell)
+  (:types agent clau porta cel-la)
 
   (:predicates
-    (at ?a - agent ?c - cell)
-    (adj ?c1 - cell ?c2 - cell)
-    (free ?c - cell)
-    (exit ?c - cell)
-    (door-at ?d - door ?c - cell)
-    (key-at ?k - key ?c - cell)
-    (has ?a - agent ?k - key)
-    (door-open ?d - door)
+    (es-a ?a - agent ?c - cel-la)
+    (adj ?c1 - cel-la ?c2 - cel-la)
+    (lliure ?c - cel-la)
+    (sortida ?c - cel-la)
+    (porta-a ?d - porta ?c - cel-la)
+    (clau-a ?k - clau ?c - cel-la)
+    (te ?a - agent ?k - clau)
+    (porta-oberta ?d - porta)
   )
 
-  ;; Moverse a una celda libre
-  (:action move
-    :parameters (?a - agent ?from - cell ?to - cell)
+  (:action moure
+    :parameters (?a - agent ?des-de - cel-la ?cap-a - cel-la)
     :precondition (and
-        (at ?a ?from)
-        (adj ?from ?to)
-        (free ?to))
+        (es-a ?a ?des-de)
+        (adj ?des-de ?cap-a)
+        (lliure ?cap-a))
     :effect (and
-        (not (at ?a ?from))
-        (at ?a ?to))
+        (not (es-a ?a ?des-de))
+        (es-a ?a ?cap-a))
   )
 
-  ;; Recoger una llave
-  (:action pick-key
-    :parameters (?a - agent ?k - key ?c - cell)
+  (:action agafar-clau
+    :parameters (?a - agent ?k - clau ?c - cel-la)
     :precondition (and
-        (at ?a ?c)
-        (key-at ?k ?c))
+        (es-a ?a ?c)
+        (clau-a ?k ?c))
     :effect (and
-        (has ?a ?k)
-        (not (key-at ?k ?c)))
+        (te ?a ?k)
+        (not (clau-a ?k ?c)))
   )
 
-  ;; Abrir puerta
-  (:action open-door
-    :parameters (?a - agent ?d - door ?k - key ?c - cell)
+  (:action obrir-porta
+    :parameters (?a - agent ?d - porta ?k - clau ?c - cel-la)
     :precondition (and
-        (at ?a ?c)
-        (door-at ?d ?c)
-        (has ?a ?k))
+        (es-a ?a ?c)
+        (porta-a ?d ?c)
+        (te ?a ?k))
     :effect (and
-        (door-open ?d)
-        (free ?c)) ;; La puerta ahora permite pasar
+        (porta-oberta ?d)
+        (lliure ?c))
   )
 )
