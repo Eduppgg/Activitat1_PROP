@@ -81,16 +81,18 @@ public class Mapa {
      * Constructor còpia 
      * Fa una "Deep copy" del mapa (duplica en memòria i copia tots els valors d'un a l'altre) 
      */
-    public Mapa(Mapa other) {
-        this.n = other.n;
-        this.m = other.m;
-        this.grid = new int[n][m];
-        for (int i = 0; i < n; i++) System.arraycopy(other.grid[i], 0, this.grid[i], 0, m);
-        
-        this.agents = new ArrayList<>();
-        for (Posicio p : other.agents) this.agents.add(new Posicio(p.x, p.y));
-        this.clausMask = other.clausMask;
-    }
+public Mapa(Mapa other) {
+    this.n = other.n;
+    this.m = other.m;
+    this.grid = new int[n][m];
+    for (int i = 0; i < n; i++) System.arraycopy(other.grid[i], 0, this.grid[i], 0, m);
+    
+    this.agents = new ArrayList<>();
+    for (Posicio p : other.agents) this.agents.add(new Posicio(p.x, p.y));
+    this.clausMask = other.clausMask;
+
+    this.sortida = new Posicio(other.sortida.x, other.sortida.y);
+}
 
     /**
      * Número de columnes
