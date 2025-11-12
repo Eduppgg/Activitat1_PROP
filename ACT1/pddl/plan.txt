@@ -1,0 +1,5 @@
+(moure-normal agent1 c-3-4 c-3-5)
+(moure-normal agent2 c-1-2 c-1-1)
+(moure-i-agafar-clau agent2 c-1-1 c-2-1 clau-a)
+(moure-per-porta agent1 c-3-5 c-3-6 porta-a clau-a)
+(moure-a-sortida agent1 c-3-6 c-2-6)
