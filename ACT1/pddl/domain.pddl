@@ -1,47 +1,92 @@
-(define (domain panys-claus)
-  (:requirements :typing :strips)
-  (:types agent clau porta cel-la)
+(define (domain panys-i-claus-simple)
+    (:requirements :strips :typing)
 
-  (:predicates
-    (es-a ?a - agent ?c - cel-la)
-    (adj ?c1 - cel-la ?c2 - cel-la)
-    (lliure ?c - cel-la)
-    (sortida ?c - cel-la)
-    (porta-a ?d - porta ?c - cel-la)
-    (clau-a ?k - clau ?c - cel-la)
-    (te ?a - agent ?k - clau)
-    (porta-oberta ?d - porta)
-  )
+    (:types
+        agent casella clau porta - objecte
+    )
 
-  (:action moure
-    :parameters (?a - agent ?des-de - cel-la ?cap-a - cel-la)
-    :precondition (and
-        (es-a ?a ?des-de)
-        (adj ?des-de ?cap-a)
-        (lliure ?cap-a))
-    :effect (and
-        (not (es-a ?a ?des-de))
-        (es-a ?a ?cap-a))
-  )
+    (:predicates
+        (esta-a ?a - agent ?ca - casella)
+        (clau-a ?c - clau ?ca - casella)
+        (porta-a ?p - porta ?ca - casella)
+        (sortida-a ?ca - casella)
 
-  (:action agafar-clau
-    :parameters (?a - agent ?k - clau ?c - cel-la)
-    :precondition (and
-        (es-a ?a ?c)
-        (clau-a ?k ?c))
-    :effect (and
-        (te ?a ?k)
-        (not (clau-a ?k ?c)))
-  )
+        (casella-buida ?ca - casella)
+        (te-clau ?c - clau) 
 
-  (:action obrir-porta
-    :parameters (?a - agent ?d - porta ?k - clau ?c - cel-la)
-    :precondition (and
-        (es-a ?a ?c)
-        (porta-a ?d ?c)
-        (te ?a ?k))
-    :effect (and
-        (porta-oberta ?d)
-        (lliure ?c))
-  )
+        (connectades ?ca1 - casella ?ca2 - casella)
+        (clau-per-porta ?c - clau ?p - porta)
+        
+        (es-casella-normal ?ca - casella)
+    )
+
+    (:action moure-normal
+        :parameters (?a - agent ?origen - casella ?desti - casella)
+        :precondition (and
+            (esta-a ?a ?origen)
+            (connectades ?origen ?desti)
+            (casella-buida ?desti)
+            (es-casella-normal ?desti)
+        )
+        :effect (and
+            (not (esta-a ?a ?origen))
+            (esta-a ?a ?desti)
+            (casella-buida ?origen)
+            (not (casella-buida ?desti))
+        )
+    )
+
+    (:action moure-i-agafar-clau
+        :parameters (?a - agent ?origen - casella ?desti - casella ?c - clau)
+        :precondition (and
+            (esta-a ?a ?origen)
+            (connectades ?origen ?desti)
+            (casella-buida ?desti)
+            (clau-a ?c ?desti)
+        )
+        :effect (and
+            (not (esta-a ?a ?origen))
+            (esta-a ?a ?desti)
+            (casella-buida ?origen)
+            (not (casella-buida ?desti))
+            (te-clau ?c)
+            (not (clau-a ?c ?desti))
+            (es-casella-normal ?desti)
+        )
+    )
+
+    (:action moure-per-porta
+        :parameters (?a - agent ?origen - casella ?desti - casella ?p - porta ?c - clau)
+        :precondition (and
+            (esta-a ?a ?origen)
+            (connectades ?origen ?desti)
+            (casella-buida ?desti)
+            (porta-a ?p ?desti)
+            (clau-per-porta ?c ?p)
+            (te-clau ?c)
+        )
+        :effect (and
+            (not (esta-a ?a ?origen))
+            (esta-a ?a ?desti)
+            (casella-buida ?origen)
+            (not (casella-buida ?desti))
+            (es-casella-normal ?desti)
+        )
+    )
+    
+    (:action moure-a-sortida
+        :parameters (?a - agent ?origen - casella ?desti - casella)
+        :precondition (and
+            (esta-a ?a ?origen)
+            (connectades ?origen ?desti)
+            (casella-buida ?desti)
+            (sortida-a ?desti)
+        )
+        :effect (and
+            (not (esta-a ?a ?origen))
+            (esta-a ?a ?desti)
+            (casella-buida ?origen)
+            (not (casella-buida ?desti))
+        )
+    )
 )
