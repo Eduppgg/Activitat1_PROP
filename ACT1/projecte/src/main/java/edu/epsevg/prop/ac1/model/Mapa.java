@@ -3,7 +3,10 @@ package edu.epsevg.prop.ac1.model;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Representa l'estat del mapa: grid, posicions agents (indexades per id 1..n),
@@ -81,28 +84,28 @@ public class Mapa {
      * Constructor còpia 
      * Fa una "Deep copy" del mapa (duplica en memòria i copia tots els valors d'un a l'altre) 
      */
-public Mapa(Mapa other) {
-    this.n = other.n;
-    this.m = other.m;
-    this.grid = new int[n][m];
-    for (int i = 0; i < n; i++) System.arraycopy(other.grid[i], 0, this.grid[i], 0, m);
-    
-    this.agents = new ArrayList<>();
-    for (Posicio p : other.agents) this.agents.add(new Posicio(p.x, p.y));
-    this.clausMask = other.clausMask;
+    public Mapa(Mapa other) {
+        this.n = other.n;
+        this.m = other.m;
+        this.grid = new int[n][m];
+        for (int i = 0; i < n; i++) System.arraycopy(other.grid[i], 0, this.grid[i], 0, m);
+        
+        this.agents = new ArrayList<>();
+        for (Posicio p : other.agents) this.agents.add(new Posicio(p.x, p.y));
+        this.clausMask = other.clausMask;
 
-    this.sortida = new Posicio(other.sortida.x, other.sortida.y);
-}
+        this.sortida = new Posicio(other.sortida.x, other.sortida.y);
+    }
 
     /**
-     * Número de columnes
-     * @return el nombre de columnes
+     * Número de files
+     * @return el nombre de files
      */
     public int getN() { return n; }
     
     /**
-     * Número de files
-     * @return el nombre de files
+     * Número de columnes
+     * @return el nombre de columnes
      */
     public int getM() { return m; }
     
@@ -113,7 +116,7 @@ public Mapa(Mapa other) {
     
     /**
      * @return la màscara binària en format int de les claus. Cada clau és un bit, començant per la a (bit menys significant),b,c...
-     *    P.ex. Si hi ha 3 claus, a, b i c, i tenim agafada la b i la c, la màscara val 6 (110 en binari)
+     *    P.ex. Si hi ha 3 claus, a, b i c, i tenim agafada la b i la c, la màscera val 6 (110 en binari)
      *          cba
      *          110 
      */
@@ -165,8 +168,7 @@ public Mapa(Mapa other) {
 
     /** 
      * Aplica el moviment SOBRE UNA CÒPIA (no altera el mapa actual)
-     * @return  la nova instància amb el moviment
-     * ja fet.
+     * @return  la nova instància amb el moviment ja fet.
      */
     public Mapa mou(Moviment acc) {
         Mapa nou = new Mapa(this);
@@ -189,7 +191,7 @@ public Mapa(Mapa other) {
         }
         // aplicar moviment
         nou.agents.set(aid - 1, dest);
-        // si hi ha clau i no la teniem, recollir-la (si acc.isRecullClau() es true o si la cell té clau)
+        // si hi ha clau i no la teniem, recollir-la 
         if (Character.isLowerCase(cell)) {
             char key = (char) cell;
             if (!nou.teClau(key)) {
@@ -303,12 +305,37 @@ public Mapa(Mapa other) {
         return sortida;
     }
 
-    
     //===================================================================
-    // Aquí van les vostres ampliacions (nous mètodes d'utilitat)
+    // Ampliacions: mètodes d'utilitat per a les heurístiques
     //===================================================================
-    
-    //@TODO: (opcionalment) el que cregueu convenient per ampliar la classe.
 
+    /**
+     * Versió simplificada de getSortidaPosicio per fer el codi de l'heurística més llegible.
+     */
+    public Posicio getSortida() {
+        return sortida;
+    }
+
+    /**
+     * Retorna les posicions de totes les claus que encara hi ha al grid.
+     * (quan recollim una clau, la casella passa a ser ESPAI, així que aquí
+     * només retorna les claus pendents de recollir).
+     */
+    public List<Posicio> getClausPendents() {
+        List<Posicio> res = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                int cell = grid[i][j];
+                if (Character.isLowerCase(cell)) {
+                    res.add(new Posicio(i, j));
+                }
+            }
+        }
+        return res;
+    }
+
+    public int getCellPublic(Posicio p) {
+    return getCell(p);
 }
 
+}
